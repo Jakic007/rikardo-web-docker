@@ -1,0 +1,38 @@
+version: "3.3"
+services:
+  rikardo-db:
+    image: mariadb
+    container_name: rikardo-db
+    restart: always
+    env_file: 
+      - .env
+    networks: 
+      - rikardo 
+    volumes:
+      - ./mariadb:/var/lib/mysql
+  rikardo-www:
+    build: .
+    container_name: rikardo-www
+    depends_on:
+      - rikardo-db
+    networks: 
+      - rikardo
+    restart: always
+  rikardo-proxy:
+    image: nginx
+    container_name: rikardo-proxy
+    ports: 
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./assets/:/assets
+    networks: 
+      - rikardo
+    restart: always
+    depends_on:
+      - rikardo-www
+networks: 
+  rikardo:
+
+
+
